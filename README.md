@@ -70,7 +70,7 @@ server {
     }
 }
 ```
-Save and exit nano with ctrl + x, Press Y, then Enter
+Save and exit nano with ctrl + x, press Y, then Enter
 
 6. Use the `service` utility to manage your Nginx server. Enable the site, test your configuration, fix any errors, and start the service. Don't forget to replace `your.hostname.com`!
 ```
@@ -174,7 +174,7 @@ server {
     return 404;
 }
 ```
-Save and exit nano with ctrl + x, Press Y, then Enter
+Save and exit nano with ctrl + x, press Y, then Enter
 
 11. Don't forget to setup Port Forwarding on your router. You'll need to forward ports 80 and 443 to your raspberry pi. Every router is different, but you can find specific instructions [here](https://portforward.com/).
 
