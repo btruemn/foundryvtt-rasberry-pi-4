@@ -13,6 +13,7 @@
 Basically just follow the steps as indicated on the [installation](https://foundryvtt.com/article/installation/) instructions for Node.js, [Nginx](https://foundryvtt.com/article/nginx/), and [foundryvtt-docker](https://github.com/felddy/foundryvtt-docker). You can get 5 free subdomains from [DuckDNS](http://www.duckdns.org/).
 
 1. Go to www.duckdns.org, sign in, and create a subdomain of your choice.
+
 ![Screen Shot 2020-11-17 at 7 41 23 PM](https://user-images.githubusercontent.com/33645693/99475967-e13ab700-290c-11eb-8cd6-caa0bd11e64a.png)
 
       Then go [here](https://www.duckdns.org/install.jsp?tab=pi) and follow the installation instructions.
@@ -33,7 +34,7 @@ mkdir foundrydata
 sudo apt-get update
 sudo apt-get install nginx
 ```
-5. Create an Nginx configuration file for your domain. Make sure to update the references to your.hostname.com in the configuration: `sudo nano /etc/nginx/sites-available/`
+5. Create an Nginx configuration file for your domain. Make sure to update the references to your.hostname.com in the configuration: `sudo nano /etc/nginx/sites-available/your.hostname.com`
 ```
 # This goes in a file within /etc/nginx/sites-available/. By convention,
 # the filename would be either "your.domain.com" or "foundryvtt", but it
@@ -78,7 +79,7 @@ sudo ln -s /etc/nginx/sites-available/your.hostname.com /etc/nginx/sites-enabled
 # Test your configuration file
 sudo service nginx configtest
 
-#View configuration errors (if the configtest was not OK)
+# View configuration errors (if the configtest was not OK)
 sudo nginx -t
 
 # Start Nginx
@@ -115,7 +116,67 @@ services:
         published: "30000"
         protocol: tcp
 ```
+*Note: if you need to run FoundryVTT on a different port, change the published port to the desired port. No need to change the target port. The `target` is the port inside the container, the `published` is the publicly exposed port.*
+
 8. Now you should be able to start the contianer and see FoundryVTT running at localhost:30000 and at your.domain.com:
 ```
 docker-compose up -d
 ```
+Check that your container is running using `docker container ls`, view the container logs using `docker logs foundry`. If needed you can stop the container `docker stop foundry`, remove it `docker rm foundry`, and run it again after making any necessary changes to your docker compose file `docker-compose up -d`. 
+
+9. Now it's time to setup HTTPS for your domain. Create SSL certificates using Certbot. Follow the instructions [here](https://certbot.eff.org/lets-encrypt/debianbuster-nginx).
+10. Update the nginx config file to use port 443 and the SSL certificates you created. Again, make sure to replace `your.hostname.com`: `nano
+```
+# the filename would be either "your.domain.com" or "foundryvtt", but it
+# really does not matter as long as it's unique and descriptive for you.
+
+# Define Server
+server {
+
+    # Enter your fully qualified domain name or leave blank
+    server_name             your.hostname.com;
+
+    # Listen on port 443 using SSL certificates
+    listen                  443 ssl;
+    ssl_certificate         "/etc/letsencrypt/live/your.hostname.com/fullchain.pem";
+    ssl_certificate_key     "/etc/letsencrypt/live/your.hostname.com/privkey.pem";
+
+    # Sets the Max Upload size to 300 MB
+    client_max_body_size 300M;
+
+    # Proxy Requests to Foundry VTT
+    location / {
+
+        # Set proxy headers
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # These are important to support WebSockets
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+
+        # Make sure to set your Foundry VTT port number
+        proxy_pass http://localhost:30000;
+    }
+}
+
+# Optional, but recommend. Redirects all HTTP requests to HTTPS for you
+server {
+    if ($host = your.hostname.com) {
+        return 301 https://$host$request_uri;
+    }
+
+    listen 80;
+	listen [::]:80;
+
+    server_name your.hostname.com;
+    return 404;
+}
+```
+Save and exit nano with ctrl + x, Press Y, then Enter
+
+11. Don't forget to setup Port Forwarding on your router. You'll need to forward ports 80 and 443 to your raspberry pi. Every router is different, but you can find specific instructions [here](https://portforward.com/).
+
+Now your site should be accessible at `https://your.domain.com`!
+
