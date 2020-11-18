@@ -72,7 +72,7 @@ server {
 ```
 Save and exit nano with ctrl + x, Press Y, then Enter
 
-6. Use the `service` utility to manage your Nginx server. Enable the site, test your configuration, fix any errors, and start the service.
+6. Use the `service` utility to manage your Nginx server. Enable the site, test your configuration, fix any errors, and start the service. Don't forget to replace `your.hostname.com`!
 ```
 # Enable new site
 sudo ln -s /etc/nginx/sites-available/your.hostname.com /etc/nginx/sites-enabled/
