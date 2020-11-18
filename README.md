@@ -5,7 +5,7 @@
 * Raspberry Pi 4
 
 ## Format SSD so you can boot from it
-1. Install Pi OS on the external SSD. I downloaded [Raspberry Pi Imager](https://www.raspberrypi.org/software/) on my adjacent Mac and used that to install the latest Raspbery Pi OS, but you can use another method. 
+1. Install Pi OS on the external SSD. I downloaded [Raspberry Pi Imager](https://www.raspberrypi.org/software/) on my adjacent Mac and used that to install the latest Raspbery Pi OS.
 <img width="674" alt="Screen Shot 2020-11-17 at 10 05 03 PM" src="https://user-images.githubusercontent.com/33645693/99486155-f588af00-2920-11eb-805d-facb578fdabe.png">
 
 2. Once the install finishes, unplug the SSD, remove the SD card from your raspberry pi (if it has one), plug in the SSD, and boot it up from the SSD.
