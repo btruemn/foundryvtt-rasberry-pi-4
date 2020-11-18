@@ -5,18 +5,19 @@
 * Raspberry Pi 4
 
 ## Format SSD so you can boot from it
-1. Flash the Pi OS to the external SSD. I downloaded [Raspberry Pi Imager](https://www.raspberrypi.org/software/) on my adjacent Mac and used that to install the latest Raspbery Pi OS.
+1. Install Pi OS on the external SSD. I downloaded [Raspberry Pi Imager](https://www.raspberrypi.org/software/) on my adjacent Mac and used that to install the latest Raspbery Pi OS, but you can use another method. 
+<img width="674" alt="Screen Shot 2020-11-17 at 10 05 03 PM" src="https://user-images.githubusercontent.com/33645693/99486155-f588af00-2920-11eb-805d-facb578fdabe.png">
 
-2. Once the install finishes, unplug the SSD, remove the SD card from your raspberry pi (if it has one), plug in the SSD, and boot it up.
+2. Once the install finishes, unplug the SSD, remove the SD card from your raspberry pi (if it has one), plug in the SSD, and boot it up from the SSD.
   
 ## Setup Steps
-Basically just follow the steps as indicated on the [installation](https://foundryvtt.com/article/installation/) instructions for Node.js, [Nginx](https://foundryvtt.com/article/nginx/), and [foundryvtt-docker](https://github.com/felddy/foundryvtt-docker). You can get 5 free subdomains from [DuckDNS](http://www.duckdns.org/).
+Basically just follow the steps as indicated on the FoundryVTT [installation](https://foundryvtt.com/article/installation/) instructions for Node.js, [Nginx](https://foundryvtt.com/article/nginx/), and [foundryvtt-docker](https://github.com/felddy/foundryvtt-docker). You can get 5 free subdomains from [DuckDNS](http://www.duckdns.org/).
 
-1. Go to www.duckdns.org, sign in, and create a subdomain of your choice.
+1. Go to www.duckdns.org, sign in, and create a subdomain of your choice. 
 
 ![Screen Shot 2020-11-17 at 7 41 23 PM](https://user-images.githubusercontent.com/33645693/99475967-e13ab700-290c-11eb-8cd6-caa0bd11e64a.png)
 
-      Then go [here](https://www.duckdns.org/install.jsp?tab=pi) and follow the installation instructions.
+Then go [here](https://www.duckdns.org/install.jsp?tab=pi) and follow the installation instructions.
 
 2. Install Node.js
 ```
@@ -34,7 +35,7 @@ mkdir foundrydata
 sudo apt-get update
 sudo apt-get install nginx
 ```
-5. Create an Nginx configuration file for your domain. Make sure to update the references to your.hostname.com in the configuration: `sudo nano /etc/nginx/sites-available/your.hostname.com`
+5. Create an Nginx configuration file for your domain. Make sure to update the references to `your.hostname.com` in the configuration file: `sudo nano /etc/nginx/sites-available/your.hostname.com`
 ```
 # This goes in a file within /etc/nginx/sites-available/. By convention,
 # the filename would be either "your.domain.com" or "foundryvtt", but it
@@ -118,14 +119,14 @@ services:
 ```
 *Note: if you need to run FoundryVTT on a different port, change the published port to the desired port. No need to change the target port. The `target` is the port inside the container, the `published` is the publicly exposed port.*
 
-8. Now you should be able to start the contianer and see FoundryVTT running at localhost:30000 and at your.hostname.com:
+8. Now you should be able to start the contianer and see FoundryVTT running at http://localhost:30000 and at http://your.hostname.com:
 ```
 docker-compose up -d
 ```
-Check that your container is running using `docker container ls`, view the container logs using `docker logs foundry`. If needed you can stop the container `docker stop foundry`, remove it `docker rm foundry`, and run it again after making any necessary changes to your docker compose file `docker-compose up -d`. 
+Check that your container is running using `docker container ls`, view the container logs using `docker logs foundry`. If needed you can stop the container `docker stop foundry`, remove it `docker rm foundry`, and run it again after making any necessary changes to your docker compose file `docker-compose up -d`. Alternately, `docker-compose down` will stop all containers and removes containers, networks, volumes, and images created by the previous `docker-compose up` in a single command.
 
 9. Now it's time to setup HTTPS for your domain. Create SSL certificates using Certbot. Follow the instructions [here](https://certbot.eff.org/lets-encrypt/debianbuster-nginx).
-10. Update the nginx config file to use port 443 and the SSL certificates you created. Again, make sure to replace `your.hostname.com`: `nano
+10. Update the nginx config file to use port 443 and the SSL certificates you created. Again, make sure to replace `your.hostname.com`: `sudo nano /etc/nginx/sites-available/your.hostname.com`
 ```
 # the filename needs to be "your.hostname.com"
 
