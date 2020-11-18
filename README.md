@@ -118,7 +118,7 @@ services:
 ```
 *Note: if you need to run FoundryVTT on a different port, change the published port to the desired port. No need to change the target port. The `target` is the port inside the container, the `published` is the publicly exposed port.*
 
-8. Now you should be able to start the contianer and see FoundryVTT running at localhost:30000 and at your.domain.com:
+8. Now you should be able to start the contianer and see FoundryVTT running at localhost:30000 and at your.hostname.com:
 ```
 docker-compose up -d
 ```
@@ -127,8 +127,7 @@ Check that your container is running using `docker container ls`, view the conta
 9. Now it's time to setup HTTPS for your domain. Create SSL certificates using Certbot. Follow the instructions [here](https://certbot.eff.org/lets-encrypt/debianbuster-nginx).
 10. Update the nginx config file to use port 443 and the SSL certificates you created. Again, make sure to replace `your.hostname.com`: `nano
 ```
-# the filename would be either "your.domain.com" or "foundryvtt", but it
-# really does not matter as long as it's unique and descriptive for you.
+# the filename needs to be "your.hostname.com"
 
 # Define Server
 server {
@@ -178,5 +177,5 @@ Save and exit nano with ctrl + x, Press Y, then Enter
 
 11. Don't forget to setup Port Forwarding on your router. You'll need to forward ports 80 and 443 to your raspberry pi. Every router is different, but you can find specific instructions [here](https://portforward.com/).
 
-Now your site should be accessible at `https://your.domain.com`!
+Now your site should be accessible at `https://your.hostname.com`!
 
