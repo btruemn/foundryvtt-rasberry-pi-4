@@ -191,3 +191,6 @@ Now your site should be accessible at `https://your.hostname.com`!
 *Note: you don't need to setup your own Jitis server*
 
 3. Save changes and once the page reloads, you should get a popup in Chrome to enable your site to use your microphone and camera! That's it!
+
+## Sync your pi with Google Drive for automatic backups (work in progreess)
+1. Follow (this guide)[https://medium.com/@artur.klauser/mounting-google-drive-on-raspberry-pi-f5002c7095c2] to mount google drive using `rclone`.
