@@ -194,13 +194,13 @@ Now your site should be accessible at `https://your.hostname.com`!
 
 ## Sync your pi with Google Drive for automatic backups
 Be aware that you shouldn't have your foundry instance referencing data in a cloud sync/backup service as it could cause data corruption. What you can do is create a tar archive of your foundry data, compress it with gzip and move it to your cloud sync/backup folder on a regular basis.
-1. Follow (this guide)[https://medium.com/@artur.klauser/mounting-google-drive-on-raspberry-pi-f5002c7095c2] to mount google drive using `rclone`.
+1. Follow [this guide](https://medium.com/@artur.klauser/mounting-google-drive-on-raspberry-pi-f5002c7095c2) to mount google drive using `rclone`.
 
 *Note: install the latest version of rclone using `curl https://rclone.org/install.sh | sudo bash`*
 
-2. Follow (this guide)[https://raspberrytips.com/backup-raspberry-pi/] to schedule automatic backups of your foundrydata folder (Config, Data, and Logs folders).
+2. Follow [this guide](https://raspberrytips.com/backup-raspberry-pi/) to schedule automatic backups of your foundrydata folder (Config, Data, and Logs folders).
 	
-	a. I recommend creating a local bin folder to store the backup script and add it to your PATH:
+	a. I recommend creating a local /bin folder to store the backup script and add it to your PATH, instead of the /usr/bin folder which requires sudo access:
 	```
 	mkdir ~/bin
 	export PATH=home/pi/bin:$PATH 
