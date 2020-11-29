@@ -197,11 +197,34 @@ Be aware that you shouldn't have your foundry instance referencing data in a clo
 1. Follow [this guide](https://medium.com/@artur.klauser/mounting-google-drive-on-raspberry-pi-f5002c7095c2) to mount google drive using `rclone`.
 
 *Note: install the latest version of rclone using `curl https://rclone.org/install.sh | sudo bash`*
+	
+a. I recommend modifying your rclone@.service file so it auto-restarts: `nano ~/.config/systemd/user/rclone@.service`. Add the `Restart` and `RestartSec` options to the 	   [Service] and `StartLimitIntervalSec` and `StartLimitBurst` in the [Unit] section prevent a failing service from being restarted every 5 seconds. This will give it 5 attempts, if it still fails, systemd will stop trying to start the service.
+
+```
+[Unit]
+Description=rclone: Remote FUSE filesystem for cloud storage config %i
+Documentation=man:rclone(1)
+StartLimitIntervalSec=500
+StartLimitBurst=5
+[Service]
+Type=notify
+Restart=on-failure
+RestartSec=5s
+ExecStartPre=/bin/mkdir -p %h/mnt/%i
+ExecStart= \
+  /usr/bin/rclone mount \
+    --fast-list \
+    --vfs-cache-mode writes \
+    --vfs-cache-max-size 100M \
+    %i: %h/mnt/%i
+[Install]
+WantedBy=default.target
+```
 
 2. Follow [this guide](https://raspberrytips.com/backup-raspberry-pi/) to schedule automatic backups of your foundrydata folder (Config, Data, and Logs folders).
-	
-	a. I recommend creating a local /bin folder to store the backup script and add it to your PATH, instead of the /usr/bin folder which requires sudo access:
-	```
-	mkdir ~/bin
-	export PATH=home/pi/bin:$PATH 
-	```
+
+a. I recommend creating a local /bin folder to store the backup script and add it to your PATH, instead of the /usr/bin folder which requires sudo access:
+```
+mkdir ~/bin
+export PATH=home/pi/bin:$PATH 
+```
