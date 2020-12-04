@@ -254,4 +254,6 @@ done
 echo all backups complete
 ```
 
-c. You can use [Crontab Generator](https://crontab-generator.org/) to find the syntax for whatever backup schedule you want in crontab. croI used `0 2 * * * ~/bin/backup.sh > ~/backups/backup__`date +\%y\%m\%d`.log` to run backups every day at 2 am and output the log to a log file with the date.
+c. You can use [Crontab Generator](https://crontab-generator.org/) to find the syntax for whatever backup schedule you want in crontab. I used this to run backups every day at 2 am and output the log to a log file with the date:
+
+    0 2 * * * ~/bin/backup.sh > ~/backups/backup__`date +\%y\%m\%d`.log
