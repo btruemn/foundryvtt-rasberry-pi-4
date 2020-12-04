@@ -228,3 +228,30 @@ a. I recommend creating a local /bin folder to store the backup script and add i
 mkdir ~/bin
 export PATH=home/pi/bin:$PATH 
 ```
+
+b. This is what my backup script looks like. I used `rclone move` to copy files to google drive and `rclone delete` to automatically delete older files.
+```
+#!/bin/bash
+BACKUP_FOLDER='/home/pi/backups/'
+BACKUP_CMD='/bin/tar -rvf'
+
+counter=1
+while [ $counter -le 3 ]
+do
+	SECONDS=0
+	NOW=`date '+%F_%H%M'`	
+	DEST_FILE="foundrydata$counter-backup-$NOW.tar"
+	DEST_FOLDER="/home/pi/mnt/gdrive/foundrydata$counter/"
+	rclone delete --min-age 4d $DEST_FOLDER 
+	$BACKUP_CMD $BACKUP_FOLDER/$DEST_FILE -P /home/pi/foundrydata$counter
+	echo compressing..
+	/bin/gzip $BACKUP_FOLDER/$DEST_FILE
+	echo copying..
+	rclone move --update --verbose --transfers 30 --checkers 8 --contimeout 60s --timeout 300s --retries 3 --drive-chunk-size 128M --low-level-retries 10 --fast-list --stats 1s $BACKUP_FOLDER/$DEST_FILE.gz gdrive:foundrydata$counter	
+	echo foundrydata$counter backup completed in $SECONDS seconds
+	((counter++))
+done
+echo all backups complete
+```
+
+c. You can use [Crontab Generator](https://crontab-generator.org/) to find the syntax for whatever backup schedule you want in crontab. croI used `0 2 * * * ~/bin/backup.sh > ~/backups/backup__`date +\%y\%m\%d`.log` to run backups every day at 2 am and output the log to a log file with the date.
