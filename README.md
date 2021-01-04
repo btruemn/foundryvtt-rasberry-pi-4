@@ -180,7 +180,7 @@ Save and exit nano with ctrl + x, press Y, then Enter
 Now your site should be accessible at `https://your.hostname.com`!
 
 ## Enable Audio/Video Chat with Jitsi
-1. Log on to the admin page of your foundryvtt instance, go to Add-on Modules and install JitisWebRTC:
+1. Log on to the admin page of your foundryvtt instance, go to Add-on Modules and install JitsiWebRTC:
 ![Screen Shot 2020-11-25 at 7 30 21 PM](https://user-images.githubusercontent.com/33645693/100301155-cbed0a80-2f54-11eb-810b-8fd8033401b7.png)
 2. Launch your world, join game session as GM and go to Game Settings -> Configure Settings -> click on Configure Audio/Video -> change Audio/Video Conferenceing Mode to Audio/Video Enabled:
 
