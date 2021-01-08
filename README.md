@@ -35,11 +35,9 @@ mkdir foundrydata
 sudo apt-get update
 sudo apt-get install nginx
 ```
-5. Create an Nginx configuration file for your domain. Make sure to update the references to `your.hostname.com` in the configuration file: `sudo nano /etc/nginx/sites-available/your.hostname.com`
+5. Create an Nginx configuration file for your domain. Make sure to update the references to `your.hostname.com` in the configuration file: `sudo nano /etc/nginx/sites-available/your.hostname.com` and make sure the proxy_pass port number matches the published port in your docker-compose file.
 ```
-# This goes in a file within /etc/nginx/sites-available/. By convention,
-# the filename would be either "your.domain.com" or "foundryvtt", but it
-# really does not matter as long as it's unique and descriptive for you.
+# the filename should be "your.hostname.com"
 
 # Define Server
 server {
@@ -66,6 +64,7 @@ server {
         proxy_set_header Connection "Upgrade";
 
         # Make sure to set your Foundry VTT port number
+	# This should match the published port in your docker-compose file
         proxy_pass http://localhost:30000;
     }
 }
@@ -92,7 +91,7 @@ sudo service nginx stop
 # Restart Nginx
 sudo service nginx restart
 ```
-7. Next, create a docker-compose file to run foundryvtt-docker: `nano $HOME/docker-compose.yml`. See the [foundryvtt-docker](https://github.com/felddy/foundryvtt-docker) for instructions on using secrets, a temporary foundryvtt download url, and other options. Make sure to replace `YOUR_FOUNDRY_LICENSE` and `YOUR_ADMIN_KEY` before saving the file.
+7. Next, create a docker-compose file to run foundryvtt-docker: `nano $HOME/docker-compose.yml`. See the [foundryvtt-docker](https://github.com/felddy/foundryvtt-docker) for instructions on using secrets, a temporary foundryvtt download url, and other options. Make sure to replace `YOUR_FOUNDRY_LICENSE`, `YOUR_ADMIN_KEY`, `YOUR_FOUNDRY_USERNAME`, and `YOUR_FOUNDRY_PASSWORD` before saving the file.
 ```
 version: "3.3"
 
@@ -109,6 +108,8 @@ services:
         target: /data
     environment:
       - CONTAINER_CACHE=/data/container_cache
+      - FOUNDRY_USERNAME=YOUR_FOUNDRY_USERNAME
+      - FOUNDRY_PASSWORD=YOUR_FOUNDRY_PASSWORD
       - FOUNDRY_LICENSE_KEY=YOUR_FOUNDRY_LICENSE
       - FOUNDRY_ADMIN_KEY=YOUR_ADMIN_KEY
     ports:
@@ -118,16 +119,16 @@ services:
 ```
 *Note: if you need to run FoundryVTT on a different port, change the published port to the desired port. No need to change the target port. The `target` is the port inside the container, the `published` is the publicly exposed port.*
 
-8. Now you should be able to start the container and see FoundryVTT running at http://localhost:30000 and at http://your.hostname.com:
+8. Now you should be able to start the container and see FoundryVTT running at `http://localhost:30000` and at `http://your.hostname.com`:
 ```
 docker-compose up -d
 ```
 Check that your container is running using `docker container ls`, view the container logs using `docker logs foundry`. If needed you can stop the container `docker stop foundry`, remove it `docker rm foundry`, and run it again after making any necessary changes to your docker compose file `docker-compose up -d`. Alternately, `docker-compose down` will stop all containers and removes containers, networks, volumes, and images created by the previous `docker-compose up` in a single command.
 
 9. Now it's time to setup HTTPS for your domain. Create SSL certificates using Certbot. Follow the instructions [here](https://certbot.eff.org/lets-encrypt/debianbuster-nginx).
-10. Update the nginx config file to use port 443 and the SSL certificates you created. Again, make sure to replace `your.hostname.com`: `sudo nano /etc/nginx/sites-available/your.hostname.com`
+10. Update the nginx config file to use port 443 and the SSL certificates you created. Again, make sure to replace `your.hostname.com`: `sudo nano /etc/nginx/sites-available/your.hostname.com` and make sure the proxy_pass port number matches the published port in your docker-compose file.
 ```
-# the filename needs to be "your.hostname.com"
+# the filename should be "your.hostname.com"
 
 # Define Server
 server {
@@ -156,6 +157,7 @@ server {
         proxy_set_header Connection "Upgrade";
 
         # Make sure to set your Foundry VTT port number
+	# This should match the published port in your docker-compose file
         proxy_pass http://localhost:30000;
     }
 }
@@ -181,8 +183,14 @@ Now your site should be accessible at `https://your.hostname.com`!
 
 ## Enable Audio/Video Chat with Jitsi
 1. Log on to the admin page of your foundryvtt instance, go to Add-on Modules and install JitsiWebRTC:
+
 ![Screen Shot 2020-11-25 at 7 30 21 PM](https://user-images.githubusercontent.com/33645693/100301155-cbed0a80-2f54-11eb-810b-8fd8033401b7.png)
-2. Launch your world, join game session as GM and go to Game Settings -> Configure Settings -> click on Configure Audio/Video -> change Audio/Video Conferenceing Mode to Audio/Video Enabled:
+
+2. Launch your world, join the game session as GM, go to Game Settings -> Manage Modules, enable Jitsi Web RTC client and then Save Module Settings
+
+![](https://i.imgur.com/Drb3eGc.png)
+
+3. Once your world reloads, go to Game Settings -> Configure Settings -> click on Configure Audio/Video -> change Audio/Video Conferencing Mode to Audio/Video Enabled
 
 ![Screen Shot 2020-11-25 at 7 32 54 PM](https://user-images.githubusercontent.com/33645693/100301376-43229e80-2f55-11eb-9e02-4920849df002.png)
 
@@ -190,7 +198,7 @@ Now your site should be accessible at `https://your.hostname.com`!
 
 *Note: you don't need to setup your own Jitsi server*
 
-3. Save changes and once the page reloads, you should get a popup in Chrome to enable your site to use your microphone and camera! That's it!
+4. Save changes and once the page reloads, you should get a popup in your browser to enable your site to use your microphone and camera. That's it!
 
 ## Sync your pi with Google Drive for automatic backups
 Be aware that you shouldn't have your foundry instance referencing data in a cloud sync/backup service as it could cause data corruption. What you can do is create a tar archive of your foundry data, compress it with gzip and move it to your cloud sync/backup folder on a regular basis.
